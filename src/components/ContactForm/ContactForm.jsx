@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import css from './ContactForm.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import {addContact} from '../../redux/actions';
+import {getContactsState} from '../../redux/selector';
 
-const ContactForm = ({ onSubmit }) => {
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const ContactForm = () => {
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
 
+    const dispatch = useDispatch();
+    const stateContacts=useSelector(getContactsState);
 
     const handleChange = evt => {
         const { name, value } = evt.target;
@@ -27,16 +35,32 @@ const ContactForm = ({ onSubmit }) => {
     
     const handleSubmit = e => {
         e.preventDefault();
-       
-        onSubmit(name, number);
-        
+
+        addContacts(name, number);
+
         setName('');
         setNumber('');
     };
  
 
+    const addContacts = (name, number)=> {  
+        const normalizedName = name.toLowerCase();
+        console.log("stateContacts=", stateContacts);
+
+        const isInContacts=stateContacts.findIndex(({name})=>name.toLowerCase()===normalizedName );
+    
+        if(isInContacts!==-1){
+          toast.error(`${name} is already in contacts`);
+        }
+        else{
+          dispatch(addContact(name, number));
+        }
+       
+    
+      };
    
     return(
+      <>
         <form onSubmit={handleSubmit} className={css.phonebook__formContact}>
             <label className={css.phonebook__formContactLabel}>Name</label>
             <input
@@ -66,7 +90,8 @@ const ContactForm = ({ onSubmit }) => {
             Add contact
             </button>
         </form>
-    
+        <ToastContainer autoClose="3000" theme="colored"/>
+        </>
     
     );
 
