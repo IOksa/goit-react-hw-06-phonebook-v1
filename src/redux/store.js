@@ -4,8 +4,6 @@ import { devToolsEnhancer } from "@redux-devtools/extension";
 import { persistStore} from 'redux-persist';
 import {persistedReducer} from './reducer';
 
-
-
    
 const enhancer = devToolsEnhancer();
 
